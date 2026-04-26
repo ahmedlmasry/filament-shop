@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
@@ -9,7 +9,6 @@ use App\Http\Resources\BrandResource;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\City;
-use App\Models\Product;
 
 class GeneralController extends Controller
 {

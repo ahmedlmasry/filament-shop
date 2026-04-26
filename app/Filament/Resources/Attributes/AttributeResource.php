@@ -13,6 +13,8 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use BackedEnum;
 use Filament\Support\Icons\Heroicon;
+use UnitEnum;
+
 
 
 class AttributeResource extends Resource
@@ -20,9 +22,9 @@ class AttributeResource extends Resource
     protected static ?string $model = Attribute::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedListBullet;
+    protected static ?int $navigationSort = 2;
 
-
-    protected static \UnitEnum|string|null $navigationGroup = 'Shop';
+    // protected static ?string $navigationParentItem = 'Products';
 
     public static function form(Schema $schema): Schema
     {

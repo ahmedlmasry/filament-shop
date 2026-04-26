@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\EmailController;
-use App\Http\Controllers\Api\GeneralController;
-use App\Http\Controllers\Api\PasswordController;
+use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\EmailController;
+use App\Http\Controllers\Api\V1\GeneralController;
+use App\Http\Controllers\Api\V1\PasswordController;
+use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1', 'middleware' => 'setLang'], function () {
@@ -11,19 +12,19 @@ Route::group(['prefix' => 'v1', 'middleware' => 'setLang'], function () {
     Route::group(['prefix' => 'user'], function () {
         //auth
         Route::controller(AuthController::class)->group(function () {
-            Route::post('login',  'login');
+            Route::post('login', 'login');
             Route::post('register', 'register');
             Route::post('logout', 'logout')->middleware('auth:sanctum');
         });
         //password
         Route::controller(PasswordController::class)->group(function () {
-            Route::post('forget-password',  'forgetPassword');
-            Route::post('reset-password',  'resetPassword');
+            Route::post('forget-password', 'forgetPassword');
+            Route::post('reset-password', 'resetPassword');
         });
         //email
         Route::controller(EmailController::class)->group(function () {
-            Route::post('send-otp',  'sendOtp');
-            Route::post('verify-email',  'verifyEmail');
+            Route::post('send-otp', 'sendOtp');
+            Route::post('verify-email', 'verifyEmail');
         });
     });
 
@@ -31,4 +32,9 @@ Route::group(['prefix' => 'v1', 'middleware' => 'setLang'], function () {
     Route::get('cities', [GeneralController::class, 'getCities']);
     Route::get('categories', [GeneralController::class, 'getCategories']);
     Route::get('brands', [GeneralController::class, 'getBrands']);
+
+    Route::post('/payment/process', [PaymentController::class, 'paymentProcess']);
+    Route::get('/payment/callback', [PaymentController::class, 'callBack']);
+
+
 });

@@ -21,10 +21,11 @@ class BrandForm
                     TextInput::make('name.ar')
                         ->label('Name (AR)')
                         ->required(),
-                    FileUpload::make('logo')
+                        FileUpload::make('logo')
                         ->disk('public')
                         ->directory('brands')
                         ->image()
+                        
                         ->required(),
                     Toggle::make('status')
                         ->required(),

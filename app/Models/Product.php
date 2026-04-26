@@ -37,7 +37,10 @@ class Product extends Model
     {
         return $this->hasMany(ProductVariant::class);
     }
-    
+    public function getAvailableInStockAttribute()
+    {
+        return $this->quantity > 0;
+    }
 //     public function orderItems()
 //     {
 //         return $this->hasMany(OrderItem::class);

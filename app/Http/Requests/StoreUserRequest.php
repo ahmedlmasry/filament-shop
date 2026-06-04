@@ -25,7 +25,7 @@ class StoreUserRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|unique:users|email',
             'password' => 'required|min:8',
-            'mobile' => 'required',
+            'mobile' => 'required|unique:users',
             'city_id' => 'required|exists:cities,id'
         ];
     }

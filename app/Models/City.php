@@ -1,12 +1,8 @@
 <?php
-
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -21,14 +17,14 @@ use Illuminate\Database\Eloquent\Model;
  */
 class City extends Model
 {
-	protected $table = 'cities';
-
+	use HasFactory;
 	protected $fillable = [
-		'name','governorate_id'
+		'name',
+		'governorate_id',
+		'shipping_cost'
 	];
-    public function governorate()
-{
-    return $this->belongsTo(Governorate::class);
-}
-
+	public function governorate()
+	{
+		return $this->belongsTo(Governorate::class);
+	}
 }

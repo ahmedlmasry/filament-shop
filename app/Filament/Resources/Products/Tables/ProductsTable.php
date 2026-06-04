@@ -32,7 +32,7 @@ class ProductsTable
 
                 // 📝 Name
                 TextColumn::make('name')
-                    ->label('Product')
+                    ->label('Name')
                     ->formatStateUsing(fn($record) => $record->getTranslation('name', 'en'))
                     ->searchable()
                     ->sortable()
@@ -64,6 +64,7 @@ class ProductsTable
                 // 💰 Price
                 TextColumn::make('price')
                     ->label('Price')
+                    ->placeholder('N/A')
                     ->money('USD')
                     ->sortable()
                     ->color('success'),

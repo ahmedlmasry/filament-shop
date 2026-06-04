@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,7 +31,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable
 {
-    use HasApiTokens,Notifiable;
+    use HasApiTokens, Notifiable, HasFactory;
 
     protected $casts = [
         'email_verified_at' => 'datetime',
@@ -55,5 +56,13 @@ class User extends Authenticatable
     public function city()
     {
         return $this->BelongsTo(City::class);
+    }
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
     }
 }

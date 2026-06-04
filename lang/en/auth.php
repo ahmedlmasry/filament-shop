@@ -20,10 +20,10 @@ return [
     'forget_password'=>'  Forgot Password',
     'login'=>'Login',
     'email'=>'Invalid email  ',
-    'password'=>'Password',
     'confirm_password'=>'Confirm Password ',
-    'logout'=>'Logout',
+    'logout'=> 'Logged out successfully',
     'name'=>'Name',
     'not_match'=>'Crediensials dose not match',
-
+    'registered_successfully'=>'Registered successfully. Verification code sent to email.',
+    'unauthenticated' =>'unauthenticated'
 ];

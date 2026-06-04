@@ -7,6 +7,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Config;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 
@@ -27,15 +28,6 @@ class Category extends Model
 {
     use HasTranslations;
 
-    protected $table = 'categories';
-
-    protected $casts = [
-        'status' => 'bool',
-        'parent' => 'int',
-        'name' => 'array',
-
-    ];
-
     protected $fillable = [
         'name',
         'slug',
@@ -43,6 +35,7 @@ class Category extends Model
         'parent'
     ];
     public $translatable = ['name'];
+    
     public function parent()
     {
         return $this->belongsTo(Category::class, 'parent_id');
@@ -51,5 +44,31 @@ class Category extends Model
     public function children()
     {
         return $this->hasMany(Category::class, 'parent_id');
+    }
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'category_id');
+    }
+    public function getStatusTranslated()
+    {
+        if (Config::get('app.locale') == 'ar') {
+            return $this->status == 1 ? 'مفعل' : 'غير مفعل';
+        } else {
+            return $this->status == 1 ? 'Active' : 'Inactive';
+        }
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return date('d/m/Y h:i A', strtotime($value));
+    }
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
+    }
+    public function scopeInactive($query)
+    {
+        return $query->where('status', 0);
     }
 }

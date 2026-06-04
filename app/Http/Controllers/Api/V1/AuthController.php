@@ -1,45 +1,28 @@
 <?php
 
 namespace App\Http\Controllers\Api\V1;
-
-use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\StoreUserRequest;
-use App\Http\Resources\UserResource;
-use App\Models\User;
-use App\Notifications\VerifyEmailNotification;
+use App\Http\Resources\AuthResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use App\Services\Auth\AuthService;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
-    public function login(LoginUserRequest $request)
-    {
-        $user = User::where('email', $request->email)->first();
-
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            return apiResponse(401,__('auth.failed'));
-        }
-        return apiResponse(200, __('auth.login'), [
-            'user' => new UserResource($user),
-            'token' => $user->createToken('auth_token', ['*'], now()->addWeek())->plainTextToken
-        ]);
-    }
+    public function __construct(private AuthService $authService){}
     public function register(StoreUserRequest $request)
     {
-        $user = DB::transaction(function () use ($request) {
-            return User::create($request->validated());
-        });
-        $user->notify(new VerifyEmailNotification());
-        return apiResponse(201, 'Registered successfully. Verification code sent to email.', [
-            'user' => new UserResource($user),
-            'token' => $user->createToken('auth_token', ['*'], now()->addWeek())->plainTextToken
-        ]);
+        $result = $this->authService->register($request->validated());
+        return $this->apiResponse(201, __('auth.registered_successfully'), new AuthResource($result));
     }
-    public function logout (Request $request)
+    public function login(LoginUserRequest $request)
     {
-        $request->user()->tokens()->delete();
-        return apiResponse(200,__('auth.logout'));
+        $result = $this->authService->login($request->email, $request->password);
+        return $this->apiResponse(200, __('auth.login'), new AuthResource($result));
+    }
+    public function logout(Request $request)
+    {
+        $this->authService->logout($request->user());
+        return $this->apiResponse(200, __('auth.logout'));
     }
 }

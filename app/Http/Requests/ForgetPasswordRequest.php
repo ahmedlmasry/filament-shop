@@ -23,24 +23,16 @@ class ForgetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => [
-                'nullable',
-                'email',
-                'exists:users,email'
-            ],
-            'mobile' => [
-                'nullable',
-                'string',
-                'exists:users,mobile'
-            ],
+            'email' => ['sometimes', 'nullable', 'email', 'exists:users,email'],
+            'mobile' => ['sometimes', 'nullable', 'string', 'exists:users,mobile'],
         ];
     }
     public function withValidator($validator)
     {
-        $validator->after(function ($validator) {
-            if (!$this->email && !$this->mobile) {
-                $validator->errors()->add('email', 'You must provide either email or phone number.');
-            }
-        });
+       $validator->after(function ($validator) {
+        if (!$this->filled('email') && !$this->filled('mobile')) {
+            $validator->errors()->add('email', 'You must provide either email or phone number.');
+        }
+    });
     }
 }

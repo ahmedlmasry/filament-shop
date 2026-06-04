@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use App\Services\Contracts\PaymentGatewayInterface;
 use Illuminate\Support\ServiceProvider;
-use App\Services\TapPaymentService;
-use App\Services\PaymobPaymentService;
+use App\Services\Payment\TapPaymentService;
+use App\Services\Payment\PaymobPaymentService;
 
 class paymentServiceprovider extends ServiceProvider
 {

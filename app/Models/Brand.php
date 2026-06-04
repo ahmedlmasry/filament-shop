@@ -11,6 +11,11 @@ class Brand extends Model
     use HasTranslations;
     protected $fillable = ['name', 'logo', 'status'];
     public $translatable = ['name'];
+    public function scopeActive($query)
+    {
+        return $query->where('status', 1);
+    }
+
     protected static function booted()
     {
         static::deleting(function ($brand) {
@@ -26,5 +31,9 @@ class Brand extends Model
                 }
             }
         });
+    }
+    public function products()
+    {
+        return $this->hasMany(Product::class);
     }
 }

@@ -28,9 +28,18 @@ class ProductDetailsResource extends BaseResource
             'discount' => $this->discount,
             'price_after_discount' => $this->price_after_discount,
             "all_images" => $this->getImagesUrl($this->images, 'public'),
+            'is_in_wishlist' => auth()->check()
+                ? ($request->user()->wishlist()->where('product_id', $this->id)->exists()) ? 1 : 0
+                : 0,
+            'in_cart' => auth()->check()
+                ? ($request->user()->cart()->first()?->items()->where('product_id', $this->id)->where('product_variant_id', null)->exists()) ? 1 : 0
+                : 0,
             'category' => $this->category?->name,
+            'brand' => $this->brand?->name,
             'variants' => ProductVariantResource::collection($this->whenLoaded('variants')),
             'reviews' => ProductPreviewResource::collection($this->productPreviews),
+            'created_at' => $this->formatDate($this->created_at, 'l, d F Y h:i A'),
+
         ];
     }
 }

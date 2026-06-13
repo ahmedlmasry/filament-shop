@@ -17,7 +17,7 @@ class WishlistService
                 'product.variants:id,product_id,price',
             ])->get();
     }
-    public function toggle(object $request, object $product): array
+    public function toggle($request, $product): array
     {
         $wishlist = Wishlist::where('user_id', $request->user()->id)
             ->where('product_id', $product->id)

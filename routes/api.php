@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\V1\ProductController;
 use App\Http\Controllers\Api\V1\ShopController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\V1\WishlistController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'v1', 'middleware' => 'setLang'], function () {
@@ -27,7 +28,7 @@ Route::group(['prefix' => 'v1', 'middleware' => 'setLang'], function () {
         });
         //password
         Route::controller(PasswordController::class)->group(function () {
-            Route::post('forget-password', 'forgetPassword'); //->middleware('throttle:forget-password');
+            Route::post('forget-password', 'forgetPassword');
             Route::post('reset-password', 'resetPassword');
         });
         //Wishlist
@@ -39,6 +40,8 @@ Route::group(['prefix' => 'v1', 'middleware' => 'setLang'], function () {
         //cart
         Route::controller(CartController::class)->prefix('cart')->middleware('auth:sanctum')->group(function () {
             Route::get('/', 'getAll');
+            Route::post('coupon','applyCoupon');
+            Route::delete('coupon','removeCoupon');
             Route::post('/{product}', 'addToCart');
             Route::patch('/{item}', 'updateQuantity');
             Route::delete('/{item}', 'remove');
@@ -47,17 +50,17 @@ Route::group(['prefix' => 'v1', 'middleware' => 'setLang'], function () {
     });
 
     // General
-    Route::get('cities', [HomeController::class, 'getCities']);
     Route::get('/home', [HomeController::class, 'getHomeData']);
     Route::get('/shop', [ShopController::class, 'getProducts']);
     Route::get('/shop/{product}', [ShopController::class, 'show']);
 
-    Route::get('/products/{product:slug}', [ProductController::class, 'show']);
+    Route::get('/products/{product}', [ProductController::class, 'show']);
 
 
 
 
 
-    Route::post('/payment/process', [PaymentController::class, 'paymentProcess']);
-    Route::get('/payment/callback', [PaymentController::class, 'callBack']);
+
+    // Route::post('/payment/process', [PaymentController::class, 'paymentProcess']);
+    // Route::get('/payment/callback', [PaymentController::class, 'callBack']);
 });

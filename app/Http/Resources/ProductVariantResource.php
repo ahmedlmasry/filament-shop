@@ -18,6 +18,9 @@ class ProductVariantResource extends JsonResource
             "id" => $this->id,
             "price" => $this->price,
             "stock" => $this->stock,
+            "in_cart" => auth()->check()
+                ? ($request->user()->cart()->first()?->items()->where('product_variant_id', $this->id)->exists()) ? 1 : 0
+                : 0,
             'attributes' => VariantAttributeResource::collection($this->variantAttributes),
          ];
     }

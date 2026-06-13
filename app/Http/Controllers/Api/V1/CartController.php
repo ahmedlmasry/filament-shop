@@ -3,74 +3,52 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\V1\BaseController;
+use App\Http\Requests\CouponRequest;
 use App\Http\Resources\CartResource;
-use App\Http\Resources\WishlistResource;
 use App\Models\CartItem;
 use App\Models\Product;
-use App\Models\Cart;
-use App\Models\ProductVariant;
-use Gate;
+use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CartController extends BaseController
 {
-    public function getAll(Request $request)
+    public function __construct(private CartService $cartService)
     {
-        $cart = $request->user()->cart()->firstOrCreate();
-        $cart->load('items.product.firstImage', 'items.variant.variantAttributes.AttributeValue.attribute');
+    }
+    public function getAll(Request $request): JsonResponse
+    {
+        $cart = $this->cartService->getAll($request);
         return $this->apiResponse(200, __('cart.get'), new CartResource($cart));
     }
-    public function addToCart(Request $request, Product $product)
+    public function applyCoupon(CouponRequest $request): JsonResponse
     {
-        $cart = $request->user()->cart()->firstOrCreate();
-
-        $price = $request->product_variant_id ? ProductVariant::findOrFail($request->product_variant_id)->price : $product->price;
-
-        $cartItem = CartItem::where('cart_id', $cart->id)
-            ->where('product_id', $product->id)
-            ->where('product_variant_id', $request->product_variant_id)
-            ->first();
-
-        if ($cartItem) {
-            $cartItem->increment('quantity', $request->quantity ?? 1);
-        } else {
-            CartItem::create([
-                'cart_id' => $cart->id,
-                'product_id' => $product->id,
-                'product_variant_id' => $request->product_variant_id,
-                'quantity' => $request->quantity,
-                'price' => $price,
-            ]);
-        }
-        $cart->load('items.product.firstImage', 'items.variant.variantAttributes.AttributeValue.attribute');
+        $cart = $this->cartService->applyCoupon($request);
+        return $this->apiResponse(200, __('cart.coupon_applied'), new CartResource($cart));
+    }
+    public function removeCoupon(Request $request): JsonResponse
+    {
+        $this->cartService->removeCoupon($request);
+        return $this->apiResponse(200, __('cart.coupon_removed'));
+    }
+    public function addToCart(Request $request, Product $product): JsonResponse
+    {
+        $cart = $this->cartService->addToCart($request, $product);
         return $this->apiResponse(200, __('cart.added'), new CartResource($cart));
     }
-
-
-    public function updateQuantity(Request $request, CartItem $item)
+    public function updateQuantity(Request $request, CartItem $item): JsonResponse
     {
-        Gate::authorize('modify', $item);
-
-
-        $item->update([
-            'quantity' => $request->quantity,
-        ]);
-        $item->cart->load('items.product.firstImage', 'items.variant.variantAttributes.AttributeValue.attribute');
-
-        return $this->apiResponse(200, __('cart.updated'), new CartResource($item->cart));
+        $cart = $this->cartService->updateQuantity($request, $item);
+        return $this->apiResponse(200, __('cart.updated'), new CartResource($cart));
     }
-
-    public function remove(CartItem $item)
+    public function remove(CartItem $item): JsonResponse
     {
-        Gate::authorize('modify', $item);
-        $item->delete();
+        $this->cartService->remove($item);
         return $this->apiResponse(200, __('cart.removed'));
     }
-
-    public function clear(Request $request)
+    public function clear(Request $request): JsonResponse
     {
-        $request->user()->cart()->first()?->items()->delete();
+        $this->cartService->clear($request);
         return $this->apiResponse(200, __('cart.cleared'));
     }
 

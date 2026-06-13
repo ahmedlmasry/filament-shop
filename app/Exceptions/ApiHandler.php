@@ -51,6 +51,9 @@ class ApiHandler
             if ($e instanceof InvalidOtpException) {
                 return errorResponse(422, 'Invalid or expired OTP');
             }
+            if ($e instanceof CouponNotValidException) {
+                return errorResponse(422, 'Coupon not valid');
+            }
             if ($e instanceof ValidationException) {
                 return errorResponse(
                     422,

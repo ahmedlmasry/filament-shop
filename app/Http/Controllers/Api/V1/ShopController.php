@@ -1,10 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Api\V1;
-
 use App\Http\Requests\ProductFilterRequest;
 use App\Http\Resources\ProductResource;
-use App\Models\Product;
 use App\Services\ShopService;
 use Illuminate\Http\JsonResponse;
 

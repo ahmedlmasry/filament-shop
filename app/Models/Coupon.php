@@ -15,4 +15,11 @@ class Coupon extends Model
         'time_used',
         'is_active',
     ];
+    public function scopeValid($query)
+    {
+        return $query->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->where('is_active', 1)
+            ->where('limit', '>', 'time_used');
+    }
 }

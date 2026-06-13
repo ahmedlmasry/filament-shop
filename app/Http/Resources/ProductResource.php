@@ -26,7 +26,11 @@ class ProductResource extends BaseResource
             "base_image" => $this->getImageUrl($this->firstImage?->file_name, 'public'),
             "all_images" => $this->getImagesUrl($this->images, 'public'),
             "category" => $this->category?->name,
-            'brand' => $this->brand?->name
+            'brand' => $this->brand?->name,
+            'is_in_wishlist' => auth()->check()
+                ? ($request->user()->wishlist()->where('product_id', $this->id)->exists()) ? 1 : 0
+                : 0,
+            'created_at' => $this->formatDate($this->created_at, 'l, d F Y h:i A'),
         ];
     }
 }

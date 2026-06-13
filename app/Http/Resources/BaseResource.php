@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
@@ -10,7 +11,7 @@ class BaseResource extends JsonResource
 {
     public function toArray(Request $request)
     {
-       return [];
+        return [];
     }
     public function getImageUrl($image, $disk)
     {
@@ -21,5 +22,14 @@ class BaseResource extends JsonResource
         return $images->map(function ($image) use ($disk) {
             return $this->getImageUrl($image->file_name, $disk);
         });
+    }
+    protected function formatDate($date, string $format = 'd F Y'): ?string
+    {
+        if (!$date)
+            return null;
+
+        return Carbon::parse($date)
+            ->locale(app()->getLocale())
+            ->translatedFormat($format);
     }
 }
